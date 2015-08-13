@@ -19,17 +19,17 @@ void VideoCaptureThread::run()
     stringstream temp;
     temp << cameraNum;
     const string NAME = "result" + temp.str() +".avi";
-    CV_FOURCC('M', 'J', 'P', 'G');
+
 
     if(camera != NULL && camera -> isOpened())
     {
-        vWriter = new VideoWriter(NAME, -1, 10.,
+        vWriter = new VideoWriter(NAME, CV_FOURCC('i', 'Y', 'U', 'V'), 15.,
                                   Size(camera->get(CAP_PROP_FRAME_WIDTH), camera->get(CAP_PROP_FRAME_HEIGHT)), true);
         if(!vWriter->isOpened())
             qDebug() << " Open file error";
         cv::Mat src;
-        //int k = 200;
-        while(1)
+        //int k = 100;
+        while(QThread::isRunning())
         {
             for(int i = 0;i < 5;i ++)
             {
@@ -41,8 +41,6 @@ void VideoCaptureThread::run()
                 if(isRecording)
                     vWriter->write(src);
                 src.release();
-                vWriter->release();
-
             }
 
             //qDebug() << k;
@@ -50,6 +48,7 @@ void VideoCaptureThread::run()
             //QThread::usleep(33);
         }
         qDebug() << "completed";
+        vWriter->release();
 
     }
 }
