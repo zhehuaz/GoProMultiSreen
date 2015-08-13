@@ -14,6 +14,7 @@ class VideoCaptureThread : public QThread
 
     bool isRecording;
     VideoCapture *camera;
+    VideoWriter *vWriter;
     int cameraNum;
 public:
     VideoCaptureThread(int);
@@ -22,6 +23,8 @@ protected:
     void run();
 signals:
     void updateFrame(const Mat& newFrame, int cameraNum);
+public slots:
+    void startRecording();
 };
 
 #endif // VIDEOCAPTURETHREAD_H

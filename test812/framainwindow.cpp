@@ -8,11 +8,11 @@ fraMainWindow::fraMainWindow(QWidget *parent) :
     ui->setupUi(this);
     qRegisterMetaType<Mat>("Mat");
 
-
     for(int i = 0;i < 4;i ++)
     {
         thread[i] = new VideoCaptureThread(i);
         connect(thread[i],SIGNAL(updateFrame(Mat, int)),this,SLOT(displayFrame(Mat, int)));
+        connect(ui->startAllBtn, SIGNAL(clicked(bool)),thread[i], SLOT(startRecording()));
         thread[i]->start();
     }
 }
@@ -33,19 +33,19 @@ void fraMainWindow::displayFrame(const Mat &newFrame, int cameraNum)
     {
     case 0:
         ui->video1->setPixmap(util.cvMatToQPixmap(newFrame));
-        qDebug() << "Video 1 received frame";
+        //qDebug() << "Video 1 received frame";
         break;
     case 1:
         ui->video2->setPixmap(util.cvMatToQPixmap(newFrame));
-        qDebug() << "Video 2 received frame";
+        //qDebug() << "Video 2 received frame";
         break;
     case 2:
         ui->video3->setPixmap(util.cvMatToQPixmap(newFrame));
-        qDebug() << "Video 3 received frame";
+        //qDebug() << "Video 3 received frame";
         break;
     case 3:
         ui->video4->setPixmap(util.cvMatToQPixmap(newFrame));
-        qDebug() << "Video 4 received frame";
+        //qDebug() << "Video 4 received frame";
         break;
 
     }
@@ -56,6 +56,3 @@ void fraMainWindow::on_start1btn_clicked()
 
 }
 
-void fraMainWindow::on_startallbtn_clicked()
-{
-}

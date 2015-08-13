@@ -17,7 +17,6 @@ class fraMainWindow : public QDialog
     Q_OBJECT
     VideoCaptureThread *thread[5];
     Utils util;
-
 public:
     explicit fraMainWindow(QWidget *parent = 0);
     ~fraMainWindow();
@@ -25,7 +24,6 @@ public:
 private slots:
     void on_start1btn_clicked();
     void displayFrame(const Mat &newFrame, int cameraNum);
-    void on_startallbtn_clicked();
 
 private:
     Ui::fraMainWindow *ui;
