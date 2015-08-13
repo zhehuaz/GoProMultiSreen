@@ -12,14 +12,16 @@ class VideoCaptureThread : public QThread
 {
     Q_OBJECT
 
-    bool isRecording = false;
-    VideoCapture *cameras[5] = {NULL};
+    bool isRecording;
+    VideoCapture *camera;
+    int cameraNum;
 public:
-    VideoCaptureThread();
+    VideoCaptureThread(int);
+    ~VideoCaptureThread();
 protected:
     void run();
 signals:
-    void updateFrame(const QVector<Mat>& newFrame,bool isRecording);
+    void updateFrame(const Mat& newFrame, int cameraNum);
 };
 
 #endif // VIDEOCAPTURETHREAD_H

@@ -1,32 +1,54 @@
 #include "framainwindow.h"
 #include "ui_framainwindow.h"
-
+#include <QDebug>
 fraMainWindow::fraMainWindow(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::fraMainWindow)
 {
     ui->setupUi(this);
-    thread = new VideoCaptureThread;
-    qRegisterMetaType< QVector<Mat> >("QVector<Mat>");
-    connect(thread,SIGNAL(updateFrame(QVector<Mat>,bool)),this,SLOT(displayFrame(QVector<Mat>)));
-    thread->start();
+    qRegisterMetaType<Mat>("Mat");
+
+
+    for(int i = 0;i < 4;i ++)
+    {
+        thread[i] = new VideoCaptureThread(i);
+        connect(thread[i],SIGNAL(updateFrame(Mat, int)),this,SLOT(displayFrame(Mat, int)));
+        thread[i]->start();
+    }
 }
 
 fraMainWindow::~fraMainWindow()
 {
     delete ui;
+    for(int i = 0;i < 4;i ++)
+    {
+        thread[i]->quit();
+    }
+    delete [] thread;
 }
 
-void fraMainWindow::displayFrame(const QVector<Mat> &newFrame)
+void fraMainWindow::displayFrame(const Mat &newFrame, int cameraNum)
 {
-    if(newFrame.size() > 0)
-        ui->video1->setPixmap(util.cvMatToQPixmap(newFrame[0]));
-    if(newFrame.size() > 1)
-        ui->video2->setPixmap(util.cvMatToQPixmap(newFrame[1]));
-    if(newFrame.size() > 2)
-        ui->video3->setPixmap(util.cvMatToQPixmap(newFrame[2]));
-    if(newFrame.size() > 3)
-        ui->video4->setPixmap(util.cvMatToQPixmap(newFrame[3]));
+    switch(cameraNum)
+    {
+    case 0:
+        ui->video1->setPixmap(util.cvMatToQPixmap(newFrame));
+        qDebug() << "Video 1 received frame";
+        break;
+    case 1:
+        ui->video2->setPixmap(util.cvMatToQPixmap(newFrame));
+        qDebug() << "Video 2 received frame";
+        break;
+    case 2:
+        ui->video3->setPixmap(util.cvMatToQPixmap(newFrame));
+        qDebug() << "Video 3 received frame";
+        break;
+    case 3:
+        ui->video4->setPixmap(util.cvMatToQPixmap(newFrame));
+        qDebug() << "Video 4 received frame";
+        break;
+
+    }
 }
 
 void fraMainWindow::on_start1btn_clicked()

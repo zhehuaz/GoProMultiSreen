@@ -15,7 +15,7 @@ class fraMainWindow;
 class fraMainWindow : public QDialog
 {
     Q_OBJECT
-    VideoCaptureThread *thread;
+    VideoCaptureThread *thread[5];
     Utils util;
 
 public:
@@ -24,7 +24,7 @@ public:
 
 private slots:
     void on_start1btn_clicked();
-    void displayFrame(const QVector<Mat> &newFrame);
+    void displayFrame(const Mat &newFrame, int cameraNum);
     void on_startallbtn_clicked();
 
 private:

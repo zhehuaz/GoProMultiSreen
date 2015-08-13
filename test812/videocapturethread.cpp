@@ -1,37 +1,37 @@
 #include "videocapturethread.h"
+#include <QDebug>
 
-VideoCaptureThread::VideoCaptureThread()
+VideoCaptureThread::VideoCaptureThread(int cameraNum = 0) : cameraNum(cameraNum)
 {
+    isRecording = false;
+    camera = NULL;
+}
+
+VideoCaptureThread::~VideoCaptureThread()
+{
+    delete camera;
 }
 
 void VideoCaptureThread::run()
 {
-    cameras[0] = new VideoCapture(0);
-    cameras[1] = new VideoCapture(1);
+    camera = new VideoCapture(cameraNum);
 
     //cv::Mat res;
-    QVector<Mat> mats;
     cv::Mat src;
-    while(1)
-    {
-        mats.clear();
-        for(int i = 0;i < 4;i ++)
+    if(camera != NULL && camera -> isOpened())
+        while(1)
         {
-            if(cameras[i] != NULL && cameras[i] -> isOpened())
+            for(int i = 0;i < 5;i ++)
             {
-                *cameras[i] >> src;
-                mats.push_back(src);            
-                src.release();
+                *camera >> src;
             }
+            updateFrame(src, cameraNum);
+            src.release();
+
+            qDebug() << "updated frame sent";
+
+            //QThread::usleep(33);
         }
-        updateFrame(mats,false);
-        QThread::sleep(100);
-    }
 }
-
- void updateFrame(const QVector<Mat> &newFrame , bool isRecording)
- {
-
- }
 
 
