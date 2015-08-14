@@ -33,43 +33,25 @@
      </item>
      <item>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QPushButton" name="start1btn">
+       <item row="7" column="1">
+        <widget class="QPushButton" name="stopbtn">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
-          <string> start1</string>
+          <string>stop</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QPushButton" name="start2btn">
-         <property name="text">
-          <string>start2</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QPushButton" name="start3btn">
-         <property name="text">
-          <string>start3</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QPushButton" name="start4btn">
-         <property name="text">
-          <string>start4</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
+       <item row="2" column="1">
         <widget class="QPushButton" name="startAllBtn">
          <property name="text">
           <string>startall</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QPushButton" name="quit">
+       <item row="8" column="1">
+        <widget class="QPushButton" name="quitbtn">
          <property name="text">
           <string>quit</string>
          </property>

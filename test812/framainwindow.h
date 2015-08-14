@@ -5,6 +5,10 @@
 #include "videocapturethread.h"
 #include "utils.h"
 #include <QVector>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QString>
+#include <QStringList>
 
 using namespace std;
 
@@ -16,16 +20,19 @@ class fraMainWindow : public QDialog
 {
     Q_OBJECT
     VideoCaptureThread *thread[5];
+    QTreeWidgetItem *item1;
     Utils util;
 public:
     explicit fraMainWindow(QWidget *parent = 0);
     ~fraMainWindow();
 
 private slots:
-    void on_start1btn_clicked();
     void displayFrame(const Mat &newFrame, int cameraNum);
+    void startRecording();
+    void stopRecording();
+    void addTreeWidgetItem(int cameraNum);
 
-private:
+public:
     Ui::fraMainWindow *ui;
 };
 

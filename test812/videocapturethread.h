@@ -1,6 +1,7 @@
 #ifndef VIDEOCAPTURETHREAD_H
 #define VIDEOCAPTURETHREAD_H
 #include <QThread>
+#include <QDateTime>
 #include <opencv2/videoio/videoio.hpp>
 #include <opencv2/core/core.hpp>
 #include <QVector>
@@ -23,8 +24,10 @@ protected:
     void run();
 signals:
     void updateFrame(const Mat& newFrame, int cameraNum);
+    void cameraIsOpen(int cameraNum);
 public slots:
     void startRecording();
+    void stopRecording();
 };
 
 #endif // VIDEOCAPTURETHREAD_H

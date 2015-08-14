@@ -16,17 +16,10 @@ VideoCaptureThread::~VideoCaptureThread()
 void VideoCaptureThread::run()
 {
     camera = new VideoCapture(cameraNum);
-    stringstream temp;
-    temp << cameraNum;
-    const string NAME = "result" + temp.str() +".avi";
-
 
     if(camera != NULL && camera -> isOpened())
     {
-        vWriter = new VideoWriter(NAME, CV_FOURCC('i', 'Y', 'U', 'V'), 15.,
-                                  Size(camera->get(CAP_PROP_FRAME_WIDTH), camera->get(CAP_PROP_FRAME_HEIGHT)), true);
-        if(!vWriter->isOpened())
-            qDebug() << " Open file error";
+        cameraIsOpen(cameraNum);
         cv::Mat src;
         //int k = 100;
         while(QThread::isRunning())
@@ -48,7 +41,7 @@ void VideoCaptureThread::run()
             //QThread::usleep(33);
         }
         qDebug() << "completed";
-        vWriter->release();
+
 
     }
 }
@@ -56,7 +49,25 @@ void VideoCaptureThread::run()
 void VideoCaptureThread::startRecording()
 {
     isRecording = true;
-    qDebug() << "start recording";
+    stringstream temp;
+    temp << cameraNum;
+
+    QDateTime current_date_time = QDateTime::currentDateTime();
+    QString timestr = current_date_time.toString("yyyy-MM-dd hh.mm.ss");
+    const string NAME = "result  " + temp.str() + timestr.toStdString() +".avi";
+
+    if(camera->isOpened())
+    {
+        vWriter = new VideoWriter(NAME, CV_FOURCC('i', 'Y', 'U', 'V'), 20.,
+                              Size(camera->get(CAP_PROP_FRAME_WIDTH), camera->get(CAP_PROP_FRAME_HEIGHT)), true);
+    }
 }
 
-
+void VideoCaptureThread::stopRecording()
+{
+    isRecording = false;
+    if(camera->isOpened())
+    {
+       vWriter->release();
+    }
+}

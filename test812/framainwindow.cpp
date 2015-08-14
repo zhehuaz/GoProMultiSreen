@@ -8,11 +8,22 @@ fraMainWindow::fraMainWindow(QWidget *parent) :
     ui->setupUi(this);
     qRegisterMetaType<Mat>("Mat");
 
+    ui->treeWidget->setHeaderLabel(tr("设备管理"));
+    ui->treeWidget->setColumnCount(1);
+    item1 = new QTreeWidgetItem(ui->treeWidget,QStringList(QString("摄像机")));
+    item1 -> setIcon(0,QIcon("camera.png"));
+
+    connect(ui->startAllBtn,SIGNAL(clicked(bool)),this,SLOT(startRecording()));
+    connect(ui->stopbtn,SIGNAL(clicked(bool)),this,SLOT(stopRecording()));
+    connect(ui->quitbtn,SIGNAL(clicked(bool)),this,SLOT(close()));
+
     for(int i = 0;i < 4;i ++)
     {
         thread[i] = new VideoCaptureThread(i);
         connect(thread[i],SIGNAL(updateFrame(Mat, int)),this,SLOT(displayFrame(Mat, int)));
+        connect(ui->stopbtn,SIGNAL(clicked(bool)),thread[i],SLOT(stopRecording()));
         connect(ui->startAllBtn, SIGNAL(clicked(bool)),thread[i], SLOT(startRecording()));
+        connect(thread[i],SIGNAL(cameraIsOpen(int)),this,SLOT(addTreeWidgetItem(int)));
         thread[i]->start();
     }
 }
@@ -20,11 +31,12 @@ fraMainWindow::fraMainWindow(QWidget *parent) :
 fraMainWindow::~fraMainWindow()
 {
     delete ui;
+    delete item1;
     for(int i = 0;i < 4;i ++)
     {
         thread[i]->quit();
     }
-    delete [] thread;
+    //delete [] thread;
 }
 
 void fraMainWindow::displayFrame(const Mat &newFrame, int cameraNum)
@@ -51,8 +63,25 @@ void fraMainWindow::displayFrame(const Mat &newFrame, int cameraNum)
     }
 }
 
-void fraMainWindow::on_start1btn_clicked()
+void fraMainWindow::addTreeWidgetItem(int cameraNum)
 {
+    QString s = "摄像机  " + QString::number(cameraNum+1);
 
+
+    //QTreeWidgetItem *item1_1 = new QTreeWidgetItem(item1,QStringList(QString("name")));
+    QTreeWidgetItem *item1_1 = new QTreeWidgetItem(item1,QStringList(s));
+}
+void fraMainWindow::startRecording()
+{
+    ui->startAllBtn->setEnabled(false);
+    ui->stopbtn->setEnabled(true);
+    ui->quitbtn->setEnabled(false);
+}
+
+void fraMainWindow::stopRecording()
+{
+    ui->startAllBtn->setEnabled(true);
+    ui->stopbtn->setEnabled(false);
+    ui->quitbtn->setEnabled(true);
 }
 
