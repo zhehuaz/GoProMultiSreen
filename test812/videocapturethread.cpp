@@ -6,11 +6,17 @@ VideoCaptureThread::VideoCaptureThread(int cameraNum = 0) : cameraNum(cameraNum)
 {
     isRecording = false;
     camera = NULL;
+    vWriter = NULL;
+
+    //connect(this, SIGNAL(finished()), this, SLOT(deleteLater()));
 }
 
 VideoCaptureThread::~VideoCaptureThread()
 {
-    delete camera;
+    if(camera != NULL)
+        delete camera;
+    if(vWriter != NULL)
+        delete vWriter;
 }
 
 void VideoCaptureThread::run()
@@ -22,7 +28,7 @@ void VideoCaptureThread::run()
         cameraIsOpen(cameraNum);
         cv::Mat src;
         //int k = 100;
-        while(QThread::isRunning())
+        while(!this->isInterruptionRequested() )
         {
             for(int i = 0;i < 5;i ++)
             {
@@ -38,12 +44,10 @@ void VideoCaptureThread::run()
 
             //qDebug() << k;
 
-            //QThread::usleep(33);
+            QThread::usleep(0);
         }
-        qDebug() << "completed";
-
-
     }
+    qDebug() << "completed";
 }
 
 void VideoCaptureThread::startRecording()
@@ -58,7 +62,7 @@ void VideoCaptureThread::startRecording()
 
     if(camera->isOpened())
     {
-        vWriter = new VideoWriter(NAME, CV_FOURCC('i', 'Y', 'U', 'V'), 20.,
+        vWriter = new VideoWriter(NAME, CV_FOURCC('i', 'Y', 'U', 'V'), 15.,
                               Size(camera->get(CAP_PROP_FRAME_WIDTH), camera->get(CAP_PROP_FRAME_HEIGHT)), true);
     }
 }
@@ -71,3 +75,4 @@ void VideoCaptureThread::stopRecording()
        vWriter->release();
     }
 }
+

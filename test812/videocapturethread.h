@@ -20,6 +20,7 @@ class VideoCaptureThread : public QThread
 public:
     VideoCaptureThread(int);
     ~VideoCaptureThread();
+
 protected:
     void run();
 signals:

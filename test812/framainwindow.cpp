@@ -24,6 +24,8 @@ fraMainWindow::fraMainWindow(QWidget *parent) :
         connect(ui->stopbtn,SIGNAL(clicked(bool)),thread[i],SLOT(stopRecording()));
         connect(ui->startAllBtn, SIGNAL(clicked(bool)),thread[i], SLOT(startRecording()));
         connect(thread[i],SIGNAL(cameraIsOpen(int)),this,SLOT(addTreeWidgetItem(int)));
+        //connect(this,SIGNAL(destroyed(QObject*)),thread[i],SLOT(stop()));
+        //connect(thread[i], SIGNAL(finished()), thread[i], SLOT(deleteLater()));
         thread[i]->start();
     }
 }
@@ -34,29 +36,39 @@ fraMainWindow::~fraMainWindow()
     delete item1;
     for(int i = 0;i < 4;i ++)
     {
-        thread[i]->quit();
+        if (thread[i] != 0 && thread[i]->isRunning() ) {
+            thread[i]->requestInterruption();
+            thread[i]->wait();
+            delete thread[i];
+        }
     }
-    //delete [] thread;
 }
 
 void fraMainWindow::displayFrame(const Mat &newFrame, int cameraNum)
 {
+    QPixmap newPixmap = QPixmap::fromImage(
+                QImage(
+                    newFrame.data,
+                    newFrame.cols,
+                    newFrame.rows,
+                    newFrame.step,
+                    QImage::Format_RGB888).rgbSwapped());
     switch(cameraNum)
     {
     case 0:
-        ui->video1->setPixmap(util.cvMatToQPixmap(newFrame));
+        ui->video1->setPixmap(newPixmap);
         //qDebug() << "Video 1 received frame";
         break;
     case 1:
-        ui->video2->setPixmap(util.cvMatToQPixmap(newFrame));
+        ui->video2->setPixmap(newPixmap);
         //qDebug() << "Video 2 received frame";
         break;
     case 2:
-        ui->video3->setPixmap(util.cvMatToQPixmap(newFrame));
+        ui->video3->setPixmap(newPixmap);
         //qDebug() << "Video 3 received frame";
         break;
     case 3:
-        ui->video4->setPixmap(util.cvMatToQPixmap(newFrame));
+        ui->video4->setPixmap(newPixmap);
         //qDebug() << "Video 4 received frame";
         break;
 
@@ -84,4 +96,3 @@ void fraMainWindow::stopRecording()
     ui->stopbtn->setEnabled(false);
     ui->quitbtn->setEnabled(true);
 }
-

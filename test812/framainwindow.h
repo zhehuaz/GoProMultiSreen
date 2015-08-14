@@ -19,7 +19,7 @@ class fraMainWindow;
 class fraMainWindow : public QDialog
 {
     Q_OBJECT
-    VideoCaptureThread *thread[5];
+    VideoCaptureThread *thread[4];
     QTreeWidgetItem *item1;
     Utils util;
 public:
